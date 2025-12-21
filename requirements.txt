@@ -2,14 +2,6 @@ accelerate==1.12.0
 datasets==4.4.2
 huggingface-hub==0.36.0
 icecream==2.1.8
-langchain==1.2.0
-langchain-core==1.2.4
-langchain-ollama==1.0.1
-langgraph==1.0.5
-langgraph-checkpoint==3.0.1
-langgraph-prebuilt==1.0.5
-langgraph-sdk==0.3.1
-langsmith==0.5.0
 matplotlib==3.10.8
 numpy==2.3.5
 ollama==0.6.1
