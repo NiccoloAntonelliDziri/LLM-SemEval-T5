@@ -1,5 +1,5 @@
 model,zero_accuracy,five_accuracy,accuracy_impr_pct,zero_spearman,five_spearman,spearman_impr_pct,zero_avg_time,five_avg_time
-deberta-finetune,0.797619,,,0.678953,,,,
+deberta-finetune,0.823129,,,0.692627,,,,
 deepseek-r1,0.651361,0.670068,2.87,0.547800,0.528861,-3.46,0.414700,0.415900
 deepseek-r1-think,0.696970,0.720000,3.30,0.652940,0.629806,-3.54,21.926800,14.719800
 gemma3,0.610544,0.636054,4.18,0.467352,0.467396,0.01,0.582900,0.577800

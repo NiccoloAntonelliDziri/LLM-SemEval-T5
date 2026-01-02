@@ -1,3 +1,4 @@
 env/
 __pycache__/
 deberta-finetune/model/
+deberta-finetune-2/model/

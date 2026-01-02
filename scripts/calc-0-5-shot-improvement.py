@@ -140,7 +140,7 @@ def main() -> None:
 	results = collect_scores(ollama_dir)
 	
 	# Add DeBERTa score
-	deberta_dir = repo_root / "deberta-finetune"
+	deberta_dir = repo_root / "deberta-finetune-2" # Because the second version is a little better
 	deberta_score_path = deberta_dir / "score.json"
 	deberta_scores = read_score_file(deberta_score_path)
 	if deberta_scores:
