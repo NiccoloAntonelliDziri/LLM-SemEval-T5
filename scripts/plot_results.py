@@ -169,87 +169,6 @@ def plot_improvement(df: pd.DataFrame, output_dir: Path):
     # This is basically the same as plot_accuracy but with annotations enabled.
     plot_grouped_bars(df, 'accuracy', 'Few-shot Learning Impact: Standard vs Enhanced', 'Accuracy', output_dir / 'few_shot_improvement.png', show_improvement=True)
 
-
-
-def plot_metric_consistency(df: pd.DataFrame, output_dir: Path):
-    """Plot Accuracy vs Spearman correlation (Zero-shot and Five-shot) to check consistency."""
-    # Prepare 0-shot data
-    z_df = df[['model', 'zero_accuracy', 'zero_spearman']].dropna().copy()
-    z_df = z_df.rename(columns={'zero_accuracy': 'accuracy', 'zero_spearman': 'spearman'})
-    
-    # Prepare 5-shot data
-    f_df = df[['model', 'five_accuracy', 'five_spearman']].dropna().copy()
-    f_df = f_df.rename(columns={'five_accuracy': 'accuracy', 'five_spearman': 'spearman'})
-    
-    if z_df.empty and f_df.empty:
-        print("No data available for metric consistency plot.")
-        return
-
-    fig, ax = plt.subplots(figsize=(12, 9))
-    
-    # Colors
-    c_0 = '#a6cee3' # Light Blue
-    c_5 = '#1f78b4' # Dark Blue
-    c_deberta = '#ff7f00' # Orange for DeBERTa
-    c_smollm_135 = '#FFB74D' # Lighter Orange
-    c_smollm_360 = '#FFB74D' # Same Lighter Orange
-
-    # Helper to get color
-    def get_color(m, default):
-        if 'deberta' in m: return c_deberta
-        if 'smollm-135M' in m: return c_smollm_135
-        if 'smollm-360M' in m: return c_smollm_360
-        return default
-
-    # Plot 0-shot
-    colors_z = [get_color(m, c_0) for m in z_df['model']]
-    ax.scatter(z_df['accuracy'], z_df['spearman'], color=colors_z, s=120, alpha=0.9, edgecolors='k', label='0-shot', zorder=3)
-    
-    # Plot 5-shot
-    colors_f = [get_color(m, c_5) for m in f_df['model']]
-    ax.scatter(f_df['accuracy'], f_df['spearman'], color=colors_f, s=120, alpha=0.9, edgecolors='k', marker='s', label='5-shot', zorder=3)
-
-    # Create custom legend to avoid DeBERTa color in 0-shot/5-shot labels
-    from matplotlib.lines import Line2D
-    legend_elements = [
-        Line2D([0], [0], marker='o', color='w', label='0-shot', markerfacecolor=c_0, markersize=10, markeredgecolor='k'),
-        Line2D([0], [0], marker='s', color='w', label='5-shot', markerfacecolor=c_5, markersize=10, markeredgecolor='k'),
-        Line2D([0], [0], marker='o', color='w', label='DeBERTa', markerfacecolor=c_deberta, markersize=10, markeredgecolor='k'),
-        Line2D([0], [0], marker='o', color='w', label='SmolLM-135M', markerfacecolor=c_smollm_135, markersize=10, markeredgecolor='k'),
-        Line2D([0], [0], marker='o', color='w', label='SmolLM-360M', markerfacecolor=c_smollm_360, markersize=10, markeredgecolor='k'),
-    ]
-    ax.legend(handles=legend_elements)
-
-    # Connect points for same model
-    common_models = set(z_df['model']).intersection(set(f_df['model']))
-    for model in common_models:
-        z_row = z_df[z_df['model'] == model].iloc[0]
-        f_row = f_df[f_df['model'] == model].iloc[0]
-        
-        # Draw arrow from 0-shot to 5-shot
-        ax.annotate("", 
-                    xy=(f_row['accuracy'], f_row['spearman']), 
-                    xytext=(z_row['accuracy'], z_row['spearman']),
-                    arrowprops=dict(arrowstyle="-|>", mutation_scale=20, color="gray", alpha=0.7, lw=2),
-                    zorder=2)
-
-    # Add labels
-    texts = []
-    # Label 0-shot points only
-    for _, row in z_df.iterrows():
-        texts.append(ax.text(row['accuracy'], row['spearman'], row['model'], fontsize=9))
-
-    ax.set_xlabel('Accuracy')
-    ax.set_ylabel('Spearman Correlation')
-    ax.set_title('Metric Consistency: Accuracy vs Spearman (0-shot & 5-shot)')
-    # ax.legend() # Removed default legend
-    ax.grid(True, linestyle='--', alpha=0.7)
-    
-    plt.tight_layout()
-    plt.savefig(output_dir / 'metric_consistency.png')
-    plt.close()
-    print(f"Saved metric_consistency.png")
-
 def plot_metric_consistency_superposed(df: pd.DataFrame, output_dir: Path):
     """Plot Accuracy vs Spearman correlation for ALL models (Standard + DeBERTa Enhanced)."""
     # Prepare 0-shot data
@@ -277,7 +196,7 @@ def plot_metric_consistency_superposed(df: pd.DataFrame, output_dir: Path):
 
     # Helper to get color
     def get_color(m, shot):
-        if m == 'deberta-finetune':
+        if 'deberta-finetune' in m:
             return c_deberta
         if 'smollm-135M' in m:
             return c_smollm_135
@@ -307,8 +226,6 @@ def plot_metric_consistency_superposed(df: pd.DataFrame, output_dir: Path):
                     arrowprops=dict(arrowstyle="-|>", mutation_scale=15, color="gray", alpha=0.6, lw=1.5),
                     zorder=2)
 
-    # Labels - Only label base models to avoid clutter, or label all?
-    # Let's label all but with small font
     for _, row in z_df.iterrows():
         label = row['model'].replace('-deberta', '')
         if '-deberta' in row['model']:

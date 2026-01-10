@@ -143,13 +143,14 @@ def main() -> None:
 
 	results = collect_scores(ollama_dir)
 	
-	# Add DeBERTa score
-	deberta_dir = repo_root / "deberta-finetune-2" # Because the second version is a little better
-	deberta_score_path = deberta_dir / "score.json"
-	deberta_scores = read_score_file(deberta_score_path)
-	if deberta_scores:
-		# We'll put it under "zero" split so it appears in the first columns
-		results["deberta-finetune"] = {"zero": deberta_scores}
+	# Add DeBERTa scores (both v1 and v2) so both versions appear in the summary and plots
+	for dname in ["deberta-finetune", "deberta-finetune-2"]:
+		deberta_dir = repo_root / dname
+		deberta_score_path = deberta_dir / "score.json"
+		deberta_scores = read_score_file(deberta_score_path)
+		if deberta_scores:
+			# Keep original directory name as the model identifier (e.g., 'deberta-finetune' and 'deberta-finetune-2')
+			results[dname] = {"zero": deberta_scores}
 
 	# Add SmolLM scores
 	for size in ["135M", "360M"]:

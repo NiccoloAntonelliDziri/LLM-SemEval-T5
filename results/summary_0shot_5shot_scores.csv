@@ -1,8 +1,10 @@
 model,zero_accuracy,five_accuracy,accuracy_impr_pct,zero_spearman,five_spearman,spearman_impr_pct,zero_avg_time,five_avg_time
-deberta-finetune,0.823129,,,0.692627,,,,
+deberta-finetune,0.797619,,,0.678953,,,,
+deberta-finetune-2,0.823129,,,0.692627,,,,
 deepseek-r1,0.651361,0.670068,2.87,0.547800,0.528861,-3.46,0.414700,0.415900
 deepseek-r1-deberta,0.680272,0.721088,6.00,0.541168,0.565337,4.47,0.449400,0.448600
 deepseek-r1-think,0.696970,0.720000,3.30,0.652940,0.629806,-3.54,21.926800,14.719800
+deepseek-r1-think-combined-deberta,0.726190,,,0.655037,,,,
 deepseek-r1-think-deberta,0.780000,0.816327,4.66,0.711120,0.726248,2.13,13.148800,34.810200
 gemma3,0.610544,0.636054,4.18,0.467352,0.467396,0.01,0.582900,0.577800
 gemma3-deberta,0.629252,0.683673,8.65,0.517767,0.606242,17.09,0.586200,0.795100
