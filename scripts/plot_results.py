@@ -87,7 +87,7 @@ def plot_grouped_bars(df: pd.DataFrame, metric_prefix: str, title: str, xlabel: 
     for i, (model_name, row) in enumerate(grouped_df.iterrows()):
         # Determine colors for this model
         # Special cases for DeBERTa base and SmolLM
-        is_deberta_base = model_name == 'deberta-finetune'
+        is_deberta_base = 'deberta-finetune' in model_name
         is_smollm = 'smollm' in model_name
         
         # Standard 0-shot
@@ -305,7 +305,7 @@ def plot_learning_potential(df: pd.DataFrame, output_dir: Path):
             label += '*'
         ax.text(row['zero_accuracy'], row['accuracy_impr_pct'] + 0.8, label, fontsize=9, ha='center', va='bottom', alpha=0.8)
 
-    # Connect Standard to Enhanced (New feature)
+    # Connect Standard to Enhanced
     # Group by base_name
     for base_name, group in plot_df.groupby('base_name'):
         if len(group) == 2:
@@ -323,8 +323,11 @@ def plot_learning_potential(df: pd.DataFrame, output_dir: Path):
     # Set x-axis limits
     all_scores = pd.concat([plot_df['zero_accuracy'], plot_df['five_accuracy']])
     
-    # Check for DeBERTa to include in limits
-    deberta_row = df[df['model'].str.contains('deberta', case=False)]
+    # Check for DeBERTa to include in limits (Prefer version 2)
+    deberta_row = df[df['model'] == 'deberta-finetune-2']
+    if deberta_row.empty:
+        deberta_row = df[df['model'] == 'deberta-finetune']
+        
     if not deberta_row.empty:
          val = deberta_row.iloc[0]['zero_accuracy']
          if pd.notna(val):
@@ -343,10 +346,13 @@ def plot_learning_potential(df: pd.DataFrame, output_dir: Path):
     # Add DeBERTa vertical line
     if not deberta_row.empty:
         deberta_val = deberta_row.iloc[0]['zero_accuracy']
+        deberta_name = deberta_row.iloc[0]['model']
+        label_text = ' DeBERTa V2' if '2' in deberta_name else ' DeBERTa Base'
+        
         if pd.notna(deberta_val):
-            ax.axvline(deberta_val, color=c_deberta, linestyle='--', linewidth=2, alpha=0.8, label='DeBERTa Base')
+            ax.axvline(deberta_val, color=c_deberta, linestyle='--', linewidth=2, alpha=0.8, label=label_text.strip())
             ylim = ax.get_ylim()
-            ax.text(deberta_val, ylim[1] - (ylim[1]-ylim[0])*0.05, ' DeBERTa Base', color=c_deberta, fontweight='bold', ha='left', va='top', fontsize=9)
+            ax.text(deberta_val, ylim[1] - (ylim[1]-ylim[0])*0.05, label_text, color=c_deberta, fontweight='bold', ha='left', va='top', fontsize=9)
     
     # Custom Legend
     from matplotlib.lines import Line2D
@@ -431,8 +437,11 @@ def plot_learning_potential_spearman(df: pd.DataFrame, output_dir: Path):
     # Set x-axis limits
     all_scores = pd.concat([plot_df['zero_spearman'], plot_df['five_spearman']])
     
-    # Check for DeBERTa to include in limits
-    deberta_row = df[df['model'].str.contains('deberta', case=False)]
+    # Check for DeBERTa to include in limits (Prefer version 2)
+    deberta_row = df[df['model'] == 'deberta-finetune-2']
+    if deberta_row.empty:
+        deberta_row = df[df['model'] == 'deberta-finetune']
+
     if not deberta_row.empty:
          val = deberta_row.iloc[0]['zero_spearman']
          if pd.notna(val):
@@ -451,10 +460,13 @@ def plot_learning_potential_spearman(df: pd.DataFrame, output_dir: Path):
     # Add DeBERTa vertical line
     if not deberta_row.empty:
         deberta_val = deberta_row.iloc[0]['zero_spearman']
+        deberta_name = deberta_row.iloc[0]['model']
+        label_text = ' DeBERTa V2' if '2' in deberta_name else ' DeBERTa Base'
+        
         if pd.notna(deberta_val):
-            ax.axvline(deberta_val, color=c_deberta, linestyle='--', linewidth=2, alpha=0.8, label='DeBERTa Base')
+            ax.axvline(deberta_val, color=c_deberta, linestyle='--', linewidth=2, alpha=0.8, label=label_text.strip())
             ylim = ax.get_ylim()
-            ax.text(deberta_val, ylim[1] - (ylim[1]-ylim[0])*0.05, ' DeBERTa Base', color=c_deberta, fontweight='bold', ha='left', va='top', fontsize=9)
+            ax.text(deberta_val, ylim[1] - (ylim[1]-ylim[0])*0.05, label_text, color=c_deberta, fontweight='bold', ha='left', va='top', fontsize=9)
     
     # Custom Legend
     from matplotlib.lines import Line2D
