@@ -18,6 +18,7 @@ A simple overview of the main files and folders in this repository:
 - `scripts/` — notebooks for running models and experiments (examples use Ollama and DeBERTa).
 - `requirements.txt` — Python dependencies to install. (in addition to pytorch)
 - `results/` — generated plots and summary CSV files.
+- `report/` — contains the final report of the project.
 
 ## Results
 
